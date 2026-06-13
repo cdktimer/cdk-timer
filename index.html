@@ -243,29 +243,11 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
     <span class="next-hint" id="ch-next"></span>
     <span><span class="conn-dot" id="ch-dot"></span><span class="badge">좌장</span></span>
   </div>
-  <div class="timer-center" style="flex:1">
+  <div class="timer-center">
     <div class="timer-display" id="ch-clock">--:--</div>
     <div class="prog-wrap"><div class="prog-fill" id="ch-bar" style="width:100%"></div></div>
     <div class="mode-badge" id="ch-mode-badge" style="display:none">카운트업</div>
     <div class="msg-popup" id="ch-popup"></div>
-  </div>
-  <div class="sess-list" id="ch-sess-list"></div>
-  <div class="chair-btns">
-    <button class="ch-btn primary" id="ch-play-btn" onclick="chairSend('togglePlay')">
-      <i class="ti ti-player-play"></i><span>시작</span>
-    </button>
-    <button class="ch-btn" onclick="chairSend('pause')">
-      <i class="ti ti-player-pause"></i><span>일시정지</span>
-    </button>
-    <button class="ch-btn danger" onclick="chairSend('stop')" style="color:var(--red);border-color:var(--red)">
-      <i class="ti ti-player-stop"></i><span>정지</span>
-    </button>
-    <button class="ch-btn" onclick="chairSend('reset')">
-      <i class="ti ti-refresh"></i><span>리셋</span>
-    </button>
-    <button class="ch-btn" onclick="chairSend('next')">
-      <i class="ti ti-arrow-right"></i><span>다음</span>
-    </button>
   </div>
 </div>
 
@@ -546,8 +528,6 @@ function renderAll(){
   setEl('ch-clock',t,'timer-display '+sc);setEl('ch-name',cur.name);setEl('ch-next',nh);
   setBar('ch-bar',bp,bCls);
   const chBadge=document.getElementById('ch-mode-badge');if(chBadge){chBadge.style.display=isUp?'block':'none'}
-  renderSessList('ch-sess-list',true);
-
   // 관리자 통계
   const totalLeft=S.secsLeft+S.sessions.slice(S.curIdx+1).reduce((a,s)=>a+s.mins*60,0);
   setEl('a-cur',(S.curIdx+1)+' / '+S.sessions.length);
@@ -557,8 +537,7 @@ function renderAll(){
   // 재생 버튼
   const admBtn=document.getElementById('adm-play-btn');
   if(admBtn){admBtn.innerHTML=S.running?'<i class="ti ti-player-pause"></i>일시정지':'<i class="ti ti-player-play"></i>시작'}
-  const chBtn=document.getElementById('ch-play-btn');
-  if(chBtn){chBtn.innerHTML=S.running?'<i class="ti ti-player-pause"></i><span>일시정지</span>':'<i class="ti ti-player-play"></i><span>시작</span>'}
+
 
   // 프리뷰
   setEl('pv-sp-clock',t,'preview-clock '+sc);setEl('pv-ch-clock',t,'preview-clock '+sc);
