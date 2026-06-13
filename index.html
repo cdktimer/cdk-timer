@@ -24,7 +24,7 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
 /* 공통 */
 .page{display:none;flex-direction:column;height:100dvh}
 .page.active{display:flex}
-.top-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0}
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.04);flex-shrink:0;backdrop-filter:blur(8px)}
 .session-name{font-size:15px;font-weight:500}
 .next-hint{font-size:12px;color:var(--text3)}
 .badge{font-size:11px;font-weight:600;letter-spacing:.07em;padding:3px 10px;border-radius:99px;border:1px solid var(--border2);color:var(--text2)}
@@ -62,6 +62,18 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
 .prog-fill{height:100%;border-radius:99px;background:var(--green);transition:width .9s linear,background .3s}
 .prog-fill.warn{background:var(--yellow)}.prog-fill.danger{background:var(--red)}.prog-fill.over{background:var(--red)}.prog-fill.up{background:var(--text3)}
 .mode-badge{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--bg3);color:var(--text3)}
+.sess-info{
+  display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:4px;
+}
+.sess-info-name{
+  font-size:clamp(16px,3vw,24px);font-weight:400;color:var(--text2);
+  letter-spacing:.01em;text-align:center;max-width:80vw;
+  transition:color .3s;
+}
+.sess-info-presenter{
+  font-size:clamp(13px,2.2vw,18px);font-weight:300;color:var(--text3);
+  text-align:center;max-width:80vw;
+}
 .msg-popup{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);min-width:260px;max-width:88vw;padding:14px 22px;border-radius:12px;border:1.5px solid var(--border2);background:var(--bg);font-size:17px;font-weight:500;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.12);display:none;z-index:50}
 .msg-popup.show{display:block;animation:popIn .2s ease}
 @keyframes popIn{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
@@ -163,6 +175,10 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
 .add-row-btn:active{background:var(--bg3)}
 .apply-btn{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;border:none;background:var(--accent);color:#fff;cursor:pointer;transition:opacity .1s,transform .08s}
 .apply-btn:active{opacity:.8;transform:scale(.97)}
+.color-preset{width:32px;height:32px;border-radius:50%;border:2px solid var(--border2);cursor:pointer;transition:transform .1s,border-color .1s;-webkit-tap-highlight-color:transparent}
+.color-preset:hover{transform:scale(1.15);border-color:var(--accent)}
+.color-preset:active{transform:scale(.9)}
+.color-preset.selected{border-color:var(--accent);border-width:3px}
 .warn-cfg{padding:10px 12px;display:flex;gap:18px;flex-wrap:wrap;align-items:center}
 .warn-field{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--text2)}
 .warn-field input{width:50px;padding:6px 7px;border-radius:8px;border:1px solid var(--border2);background:var(--bg);font-size:13px;color:var(--text)}
@@ -232,6 +248,7 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
     <div class="timer-display" id="sp-clock">--:--</div>
     <div class="prog-wrap"><div class="prog-fill" id="sp-bar" style="width:100%"></div></div>
     <div class="mode-badge" id="sp-mode-badge" style="display:none">카운트업</div>
+    <div class="sess-info" id="sp-sess-info"></div>
     <div class="msg-popup" id="sp-popup"></div>
   </div>
 </div>
@@ -247,6 +264,7 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
     <div class="timer-display" id="ch-clock">--:--</div>
     <div class="prog-wrap"><div class="prog-fill" id="ch-bar" style="width:100%"></div></div>
     <div class="mode-badge" id="ch-mode-badge" style="display:none">카운트업</div>
+    <div class="sess-info" id="ch-sess-info"></div>
     <div class="msg-popup" id="ch-popup"></div>
   </div>
 </div>
@@ -378,6 +396,26 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
       </div>
     </div>
     <div class="adm-card">
+      <div class="adm-card-hd">화면 배경색</div>
+      <div class="warn-cfg" style="gap:10px;flex-wrap:wrap">
+        <div style="font-size:13px;color:var(--text2)">연자·좌장 화면 배경</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="color-preset" style="background:#ffffff" onclick="setBgColor('#ffffff')" title="흰색"></button>
+          <button class="color-preset" style="background:#1a1a1a" onclick="setBgColor('#1a1a1a')" title="검정"></button>
+          <button class="color-preset" style="background:#0d2137" onclick="setBgColor('#0d2137')" title="네이비"></button>
+          <button class="color-preset" style="background:#1a3a1a" onclick="setBgColor('#1a3a1a')" title="다크그린"></button>
+          <button class="color-preset" style="background:#2d1b4e" onclick="setBgColor('#2d1b4e')" title="퍼플"></button>
+          <button class="color-preset" style="background:#3a1a1a" onclick="setBgColor('#3a1a1a')" title="다크레드"></button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <label style="font-size:13px;color:var(--text2)">직접 선택</label>
+          <input type="color" id="bg-color-picker" value="#ffffff" oninput="setBgColor(this.value)"
+            style="width:40px;height:32px;border:1px solid var(--border2);border-radius:6px;cursor:pointer;padding:2px">
+        </div>
+        <button class="apply-btn" onclick="setBgColor('#ffffff')">초기화</button>
+      </div>
+    </div>
+    <div class="adm-card">
       <div class="adm-card-hd">경고 타이밍 (카운트다운)</div>
       <div class="warn-cfg">
         <div class="warn-field">🟡 <input type="number" id="wy" value="5" min="1" max="30"> 분 전</div>
@@ -396,10 +434,11 @@ let lastMsg={speaker:'',chair:''};
 let popTimers={};
 
 let S={
-  sessions:[{name:'세션 1',mins:20},{name:'세션 2',mins:15}],
+  sessions:[{name:'세션 1',presenter:'',mins:20},{name:'세션 2',presenter:'',mins:15}],
   curIdx:0, secsLeft:20*60, countUp:0,
   running:false, mode:'down',
   warnYellow:5, warnRed:1,
+  bgColor:'#ffffff',
 };
 
 const PEER_CFG={
@@ -469,7 +508,7 @@ function dot(id,ok){const e=document.getElementById(id);if(e)e.className='conn-d
 function handleData(conn,data){
   if(!data||!data.type)return;
   if(MY_ROLE==='admin'){if(data.type==='control'){applyCtrl(data);bcast();renderAll()}if(data.type==='register')conn._role=data.role;return}
-  if(data.type==='init'||data.type==='state'){S={...S,...data.state};renderAll()}
+  if(data.type==='init'||data.type==='state'){S={...S,...data.state};renderAll();if(S.bgColor)applyBgColor(S.bgColor)}
   if(data.type==='message')showPopup(data.text);
 }
 
@@ -519,15 +558,23 @@ function renderAll(){
   const nh=nxt?'다음: '+nxt.name:'마지막 세션';
   const isUp=S.mode==='up';
 
+  // 세션 정보 HTML
+  const sessInfoHtml = `
+    ${cur.name?`<div class="sess-info-name">${cur.name}</div>`:''}
+    ${cur.presenter?`<div class="sess-info-presenter">${cur.presenter}</div>`:''}
+  `;
+
   // 연자
   setEl('sp-clock',t,'timer-display '+sc);setEl('sp-name',cur.name);setEl('sp-next',nh);
   setBar('sp-bar',bp,bCls);
   const spBadge=document.getElementById('sp-mode-badge');if(spBadge){spBadge.style.display=isUp?'block':'none'}
+  const spInfo=document.getElementById('sp-sess-info');if(spInfo)spInfo.innerHTML=sessInfoHtml;
 
   // 좌장
   setEl('ch-clock',t,'timer-display '+sc);setEl('ch-name',cur.name);setEl('ch-next',nh);
   setBar('ch-bar',bp,bCls);
   const chBadge=document.getElementById('ch-mode-badge');if(chBadge){chBadge.style.display=isUp?'block':'none'}
+  const chInfo=document.getElementById('ch-sess-info');if(chInfo)chInfo.innerHTML=sessInfoHtml;
   // 관리자 통계
   const totalLeft=S.secsLeft+S.sessions.slice(S.curIdx+1).reduce((a,s)=>a+s.mins*60,0);
   setEl('a-cur',(S.curIdx+1)+' / '+S.sessions.length);
@@ -561,8 +608,9 @@ function renderSessList(elId,isChair){
 function renderAdminSessEdit(){
   const el=document.getElementById('sess-edit-rows');if(!el)return;
   el.innerHTML=S.sessions.map((s,i)=>`
-    <div class="se-row">
-      <input type="text" id="sn${i}" value="${s.name}" oninput="sessEditDirty=true">
+    <div class="se-row" style="flex-wrap:wrap">
+      <input type="text" id="sn${i}" value="${s.name}" placeholder="세션명" oninput="sessEditDirty=true" style="flex:2;min-width:100px">
+      <input type="text" id="sp${i}" value="${s.presenter||''}" placeholder="연자명 (선택)" oninput="sessEditDirty=true" style="flex:2;min-width:100px">
       <input type="number" id="sm${i}" value="${s.mins}" min="1" max="300" oninput="sessEditDirty=true">
       <span class="unit">분</span>
       <button class="del-btn" onclick="delSessRow(${i})"><i class="ti ti-trash"></i></button>
@@ -575,17 +623,55 @@ function addSessRow(){
   const el=document.getElementById('sess-edit-rows');
   const i=el.querySelectorAll('.se-row').length;
   const row=document.createElement('div');row.className='se-row';
-  row.innerHTML=`<input type="text" id="sn${i}" value="새 세션" oninput="sessEditDirty=true"><input type="number" id="sm${i}" value="15" min="1" max="300" oninput="sessEditDirty=true"><span class="unit">분</span><button class="del-btn" onclick="this.closest('.se-row').remove()"><i class="ti ti-trash"></i></button>`;
+  row.innerHTML=`<input type="text" id="sn${i}" value="새 세션" placeholder="세션명" oninput="sessEditDirty=true" style="flex:2;min-width:100px"><input type="text" id="sp${i}" value="" placeholder="연자명 (선택)" oninput="sessEditDirty=true" style="flex:2;min-width:100px"><input type="number" id="sm${i}" value="15" min="1" max="300" oninput="sessEditDirty=true"><span class="unit">분</span><button class="del-btn" onclick="this.closest('.se-row').remove()"><i class="ti ti-trash"></i></button>`;
   el.appendChild(row);
 }
 function delSessRow(i){const rows=document.getElementById('sess-edit-rows').querySelectorAll('.se-row');if(rows.length<=1)return;rows[i].remove();sessEditDirty=true}
 function applySessions(){
   const rows=document.getElementById('sess-edit-rows').querySelectorAll('.se-row');
-  const sessions=Array.from(rows).map((_,i)=>({name:document.getElementById('sn'+i)?.value||'세션',mins:parseInt(document.getElementById('sm'+i)?.value)||15}));
+  const sessions=Array.from(rows).map((_,i)=>({name:document.getElementById('sn'+i)?.value||'세션',presenter:document.getElementById('sp'+i)?.value||'',mins:parseInt(document.getElementById('sm'+i)?.value)||15}));
   const warnYellow=parseInt(document.getElementById('wy').value)||5;
   const warnRed=parseInt(document.getElementById('wr').value)||1;
   applyCtrl({action:'updateSessions',sessions,warnYellow,warnRed});
   renderAll();bcast();
+}
+
+// ══ 배경색 ══
+function setBgColor(color){
+  S.bgColor=color;
+  applyBgColor(color);
+  bcast();
+  // picker 동기화
+  const picker=document.getElementById('bg-color-picker');
+  if(picker)picker.value=color;
+  // 선택된 프리셋 표시
+  document.querySelectorAll('.color-preset').forEach(b=>{
+    b.classList.toggle('selected', b.style.background===color||b.getAttribute('onclick')===`setBgColor('${color}')`);
+  });
+}
+
+function applyBgColor(color){
+  // 연자/좌장 화면 배경 변경
+  ['pg-speaker','pg-chair'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.style.background=color;
+    // 배경이 어두우면 텍스트 색상 자동 반전
+    const isDark=isColorDark(color);
+    el.style.setProperty('--text',isDark?'#ffffff':'#1a1a1a');
+    el.style.setProperty('--text2',isDark?'rgba(255,255,255,.7)':'#555');
+    el.style.setProperty('--text3',isDark?'rgba(255,255,255,.4)':'#999');
+    el.style.setProperty('--border',isDark?'rgba(255,255,255,.12)':'rgba(0,0,0,.1)');
+    el.style.setProperty('--bg2',isDark?'rgba(255,255,255,.06)':'#f4f4f4');
+    el.style.setProperty('--bg3',isDark?'rgba(255,255,255,.12)':'#e8e8e8');
+  });
+}
+
+function isColorDark(hex){
+  const r=parseInt(hex.slice(1,3),16);
+  const g=parseInt(hex.slice(3,5),16);
+  const b=parseInt(hex.slice(5,7),16);
+  return(r*299+g*587+b*114)/1000<128;
 }
 
 renderAll();
