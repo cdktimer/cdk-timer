@@ -478,8 +478,8 @@ function setBar(id,p,cls){const e=document.getElementById(id);if(e){e.style.widt
 function chooseRole(r){MY_ROLE=r;if(r==='admin'){showPage('pg-admin-login');setTimeout(()=>document.getElementById('admin-id-input').focus(),150)}else{document.getElementById('join-title').textContent=r==='chair'?'좌장 — 방 이름 입력':'연자 — 방 이름 입력';showPage('pg-room-join');setTimeout(()=>document.getElementById('join-code-input').focus(),150)}}
 
 // 관리자 계정 설정 (아이디 / 비밀번호)
-const ADMIN_ID = 'cdkadmin';
-const ADMIN_PW = 'cdk2025!';
+const ADMIN_ID = 'cdk';
+const ADMIN_PW = 'cdk2017';
 
 function adminLogin(){
   const id = document.getElementById('admin-id-input').value.trim();
