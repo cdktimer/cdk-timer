@@ -41,7 +41,7 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
 .rc-icon{font-size:26px;color:var(--text2)}.rc-name{font-size:17px;font-weight:500}.rc-desc{font-size:12px;color:var(--text3);margin-top:2px}.rc-arr{margin-left:auto;font-size:18px;color:var(--text3)}
 
 /* 방 입력 */
-#pg-room-admin,#pg-room-join{align-items:center;justify-content:center;padding:24px}
+#pg-admin-login,#pg-room-admin,#pg-room-join{align-items:center;justify-content:center;padding:24px}
 .room-box{width:100%;max-width:320px;border:1.5px solid var(--border2);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:14px}
 .room-box h2{font-size:16px;font-weight:500}
 .room-input{width:100%;padding:12px 16px;font-size:22px;font-weight:300;letter-spacing:.1em;text-align:center;border:1.5px solid var(--border2);border-radius:var(--r);background:var(--bg);color:var(--text);transition:border-color .2s}
@@ -206,6 +206,24 @@ body{font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);
         <div><div class="rc-name">연자</div><div class="rc-desc">타이머 표시 · 메시지 수신</div></div>
         <i class="ti ti-chevron-right rc-arr"></i>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 관리자: 로그인 ══ -->
+<div id="pg-admin-login" class="page">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:24px">
+    <div class="room-box">
+      <h2>관리자 로그인</h2>
+      <input class="room-input" id="admin-id-input" maxlength="20" placeholder="아이디"
+        style="font-size:18px;letter-spacing:.05em"
+        onkeydown="if(event.key==='Enter')document.getElementById('admin-pw-input').focus()">
+      <input class="room-input" id="admin-pw-input" type="password" maxlength="20" placeholder="비밀번호"
+        style="font-size:18px;letter-spacing:.05em"
+        onkeydown="if(event.key==='Enter')adminLogin()">
+      <div class="room-hint" id="login-hint" style="color:var(--red);display:none">아이디 또는 비밀번호가 틀렸습니다</div>
+      <button class="big-btn" onclick="adminLogin()">로그인</button>
+      <button class="big-btn sec" onclick="showPage('pg-select')">← 역할 선택으로</button>
     </div>
   </div>
 </div>
@@ -457,7 +475,28 @@ function setEl(id,txt,cls){const e=document.getElementById(id);if(!e)return;e.te
 function setBar(id,p,cls){const e=document.getElementById(id);if(e){e.style.width=p;e.className=cls}}
 
 // ══ 역할 / 방 ══
-function chooseRole(r){MY_ROLE=r;if(r==='admin'){showPage('pg-room-admin');setTimeout(()=>document.getElementById('admin-room-input').focus(),150)}else{document.getElementById('join-title').textContent=r==='chair'?'좌장 — 방 이름 입력':'연자 — 방 이름 입력';showPage('pg-room-join');setTimeout(()=>document.getElementById('join-code-input').focus(),150)}}
+function chooseRole(r){MY_ROLE=r;if(r==='admin'){showPage('pg-admin-login');setTimeout(()=>document.getElementById('admin-id-input').focus(),150)}else{document.getElementById('join-title').textContent=r==='chair'?'좌장 — 방 이름 입력':'연자 — 방 이름 입력';showPage('pg-room-join');setTimeout(()=>document.getElementById('join-code-input').focus(),150)}}
+
+// 관리자 계정 설정 (아이디 / 비밀번호)
+const ADMIN_ID = 'cdkadmin';
+const ADMIN_PW = 'cdk2025!';
+
+function adminLogin(){
+  const id = document.getElementById('admin-id-input').value.trim();
+  const pw = document.getElementById('admin-pw-input').value;
+  const hint = document.getElementById('login-hint');
+  if(id === ADMIN_ID && pw === ADMIN_PW){
+    hint.style.display = 'none';
+    document.getElementById('admin-id-input').value = '';
+    document.getElementById('admin-pw-input').value = '';
+    showPage('pg-room-admin');
+    setTimeout(()=>document.getElementById('admin-room-input').focus(),150);
+  } else {
+    hint.style.display = 'block';
+    document.getElementById('admin-pw-input').value = '';
+    document.getElementById('admin-pw-input').focus();
+  }
+}
 
 function adminStart(){
   const raw=document.getElementById('admin-room-input').value.trim();
